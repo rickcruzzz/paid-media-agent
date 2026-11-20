@@ -132,6 +132,9 @@ class Settings(BaseSettings):
     """Reasoning effort for Anthropic, OpenAI, and LangSmith Gateway models; unset is the
     provider's default. Passed as LangChain's `reasoning_effort`. "none" disables the thinking
     budget on OpenAI-compatible endpoints that support it (e.g. a local Ollama Qwen3.5)."""
+    paid_media_model_keep_alive: str | None = None
+    """How long an OpenAI-compatible endpoint keeps the model loaded after a call (`30m`, `1h`,
+    `-1`), sent as `keep_alive` in the request body. Ollama uses it; leave unset elsewhere."""
     paid_media_model_timeout_seconds: int = Field(default=120, ge=10)
     """Per-request model timeout. A stalled gateway call otherwise blocks a run indefinitely."""
     paid_media_max_model_calls: int = Field(default=40, ge=5)
@@ -200,6 +203,7 @@ class Settings(BaseSettings):
         "paid_media_tool_selector_model",
         "paid_media_model_api_key_env",
         "paid_media_model_effort",
+        "paid_media_model_keep_alive",
         "paid_media_live_write_catalog_revision",
         mode="before",
     )

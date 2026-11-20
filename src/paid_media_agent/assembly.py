@@ -167,13 +167,15 @@ def resolve_model(
     api_key_env: str | None = None,
     timeout_seconds: int = 120,
     effort: str | None = None,
+    keep_alive: str | None = None,
 ) -> BaseChatModel:
     """Initialize the configured provider model. No implicit gateway: `langsmith:` specs opt in.
 
     `api_key_env` names the environment variable holding the key when the provider does not read
     its default one (for example an OpenAI-compatible endpoint with its own key). Every request
     gets a timeout and two SDK retries; the retry middleware handles what remains. `effort` is
-    the reasoning effort, for providers that take one (`EFFORT_PROVIDERS`).
+    the reasoning effort, for providers that take one (`EFFORT_PROVIDERS`). `keep_alive` rides in
+    the request body for endpoints that keep a model loaded between calls (a local Ollama).
     """
     if override is not None:
         return override
@@ -186,6 +188,7 @@ def resolve_model(
         kwargs["base_url"] = str(config.base_url)
     if api_key_env and os.environ.get(api_key_env):
         kwargs["api_key"] = os.environ[api_key_env]
+    extra_body: dict[str, Any] = {}
     if effort is not None:
         if config.provider not in EFFORT_PROVIDERS:
             raise ValueError(
@@ -195,9 +198,13 @@ def resolve_model(
             # The OpenAI client only forwards reasoning_effort for its own reasoning models, so an
             # OpenAI-compatible endpoint (Ollama) needs the switch in the request body instead.
             # init_chat_model folds extra_body into model_kwargs and warns about it once per call.
-            kwargs["extra_body"] = {"reasoning_effort": "none"}
+            extra_body["reasoning_effort"] = "none"
         else:
             kwargs["reasoning_effort"] = effort
+    if keep_alive is not None:
+        extra_body["keep_alive"] = keep_alive
+    if extra_body:
+        kwargs["extra_body"] = extra_body
     resolved: BaseChatModel = init_chat_model(config.spec, **kwargs)
     return resolved
 
@@ -228,6 +235,7 @@ def build_agent_components(
         api_key_env=settings.paid_media_model_api_key_env,
         timeout_seconds=settings.paid_media_model_timeout_seconds,
         effort=settings.paid_media_model_effort,
+        keep_alive=settings.paid_media_model_keep_alive,
     )
     services = _build_services(settings, runtime)
 

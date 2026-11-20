@@ -382,6 +382,7 @@ def model_test(root: Path, *, invoke: Callable[[str], str] | None = None) -> Act
                 api_key_env=settings.paid_media_model_api_key_env,
                 timeout_seconds=settings.paid_media_model_timeout_seconds,
                 effort=settings.paid_media_model_effort,
+                keep_alive=settings.paid_media_model_keep_alive,
             )
             reply = _content_text(chat.invoke("Reply with the single word OK.").content)
         else:
@@ -1198,6 +1199,7 @@ def ask_question(root: Path, question: str, *, model: Any | None = None) -> Acti
                 api_key_env=settings.paid_media_model_api_key_env,
                 timeout_seconds=settings.paid_media_model_timeout_seconds,
                 effort=settings.paid_media_model_effort,
+                keep_alive=settings.paid_media_model_keep_alive,
             )
         )
         runtime = build_configured_runtime(settings, project_root=root, model=chat)

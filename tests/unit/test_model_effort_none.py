@@ -34,3 +34,30 @@ def test_effort_none_is_accepted_by_the_settings_schema() -> None:
     settings = Settings(paid_media_model_effort="none")
 
     assert settings.paid_media_model_effort == "none"
+
+
+def test_keep_alive_and_effort_share_the_request_body(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "not-a-real-key")
+
+    llm = resolve_model(
+        ModelConfig.parse("openai:qwen3.5:9b", base_url="http://127.0.0.1:11434/v1"),
+        effort="none",
+        keep_alive="30m",
+    )
+
+    assert (getattr(llm, "extra_body", None) or {}) == {
+        "reasoning_effort": "none",
+        "keep_alive": "30m",
+    }
+
+
+def test_keep_alive_is_omitted_when_unset(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "not-a-real-key")
+
+    llm = resolve_model(
+        ModelConfig.parse("openai:qwen3.5:9b", base_url="http://127.0.0.1:11434/v1"),
+    )
+
+    assert getattr(llm, "extra_body", None) in (None, {})

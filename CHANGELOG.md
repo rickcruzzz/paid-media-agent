@@ -61,6 +61,8 @@ Live provider writes remain disabled by default and require the documented relea
   models. A local Ollama serving a thinking model (Qwen3.5) otherwise answers with empty content,
   because the whole token budget is spent in the reasoning field. `ask` and the model test pass the
   configured effort through instead of dropping it.
+- `PAID_MEDIA_MODEL_KEEP_ALIVE` rides in the request body so an OpenAI-compatible endpoint keeps the
+  model loaded between runs; a local Ollama stops paying the full reload before every command.
 - Clarify the README's capabilities, setup, deployment, and company customization guidance.
 - Use the LangChain company logo in the README, with light and dark variants.
 - Require `managed-deepagents` 0.10.1 or later (and `deepagents` 0.7.30 or later). Document MDA's

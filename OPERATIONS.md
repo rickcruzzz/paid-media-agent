@@ -215,6 +215,8 @@ empty answer, because the whole token budget goes to the reasoning field.
 For an OpenAI-compatible endpoint, set `PAID_MEDIA_MODEL_BASE_URL` and
 `PAID_MEDIA_MODEL_API_KEY_ENV` to the name of its key environment variable. Native tool search is
 used only for verified models and endpoints; other models use the portable tool selector.
+`PAID_MEDIA_MODEL_KEEP_ALIVE` (`30m`, `1h`, `-1`) rides in the request body so a local Ollama keeps
+the model loaded between runs instead of reloading it on every command; leave it unset elsewhere.
 
 ## Writes
 
