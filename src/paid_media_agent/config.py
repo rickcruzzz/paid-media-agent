@@ -128,9 +128,10 @@ class Settings(BaseSettings):
     paid_media_tool_selector_model: str | None = None
     paid_media_model_api_key_env: str | None = None
     """Env var holding the model API key when the provider does not read its default one."""
-    paid_media_model_effort: Literal["low", "medium", "high", "xhigh", "max"] | None = None
+    paid_media_model_effort: Literal["none", "low", "medium", "high", "xhigh", "max"] | None = None
     """Reasoning effort for Anthropic, OpenAI, and LangSmith Gateway models; unset is the
-    provider's default. Passed as LangChain's `reasoning_effort`."""
+    provider's default. Passed as LangChain's `reasoning_effort`. "none" disables the thinking
+    budget on OpenAI-compatible endpoints that support it (e.g. a local Ollama Qwen3.5)."""
     paid_media_model_timeout_seconds: int = Field(default=120, ge=10)
     """Per-request model timeout. A stalled gateway call otherwise blocks a run indefinitely."""
     paid_media_max_model_calls: int = Field(default=40, ge=5)

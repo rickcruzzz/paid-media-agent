@@ -56,6 +56,11 @@ Live provider writes remain disabled by default and require the documented relea
 
 ### Changed
 
+- `PAID_MEDIA_MODEL_EFFORT=none` now reaches OpenAI-compatible endpoints: the value travels in the
+  request body, since the OpenAI client only forwards `reasoning_effort` for its own reasoning
+  models. A local Ollama serving a thinking model (Qwen3.5) otherwise answers with empty content,
+  because the whole token budget is spent in the reasoning field. `ask` and the model test pass the
+  configured effort through instead of dropping it.
 - Clarify the README's capabilities, setup, deployment, and company customization guidance.
 - Use the LangChain company logo in the README, with light and dark variants.
 - Require `managed-deepagents` 0.10.1 or later (and `deepagents` 0.7.30 or later). Document MDA's

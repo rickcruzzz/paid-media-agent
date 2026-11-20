@@ -206,9 +206,11 @@ Do not infer a connection from a saved key. Check the catalog and one real read 
 The LangSmith Gateway uses `langsmith:provider/model`. Other providers have optional extras:
 `google`, `groq`, `xai`, `mistral`, and `deepseek`.
 
-`PAID_MEDIA_MODEL_EFFORT` (`low`, `medium`, `high`, `xhigh`, `max`) sets reasoning effort for
-Anthropic, OpenAI, and LangSmith Gateway models; unset uses the provider's default. Other providers
-refuse it at startup.
+`PAID_MEDIA_MODEL_EFFORT` (`none`, `low`, `medium`, `high`, `xhigh`, `max`) sets reasoning effort
+for Anthropic, OpenAI, and LangSmith Gateway models; unset uses the provider's default. Other
+providers refuse it at startup. `none` is forwarded in the request body so OpenAI-compatible
+endpoints honour it too: a local Ollama serving a thinking model (Qwen3.5) otherwise returns an
+empty answer, because the whole token budget goes to the reasoning field.
 
 For an OpenAI-compatible endpoint, set `PAID_MEDIA_MODEL_BASE_URL` and
 `PAID_MEDIA_MODEL_API_KEY_ENV` to the name of its key environment variable. Native tool search is

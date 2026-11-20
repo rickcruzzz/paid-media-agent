@@ -191,7 +191,13 @@ def resolve_model(
             raise ValueError(
                 f"PAID_MEDIA_MODEL_EFFORT is not supported for {config.provider}; unset it"
             )
-        kwargs["reasoning_effort"] = effort
+        if effort == "none":
+            # The OpenAI client only forwards reasoning_effort for its own reasoning models, so an
+            # OpenAI-compatible endpoint (Ollama) needs the switch in the request body instead.
+            # init_chat_model folds extra_body into model_kwargs and warns about it once per call.
+            kwargs["extra_body"] = {"reasoning_effort": "none"}
+        else:
+            kwargs["reasoning_effort"] = effort
     resolved: BaseChatModel = init_chat_model(config.spec, **kwargs)
     return resolved
 
